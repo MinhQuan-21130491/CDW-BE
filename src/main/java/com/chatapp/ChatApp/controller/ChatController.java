@@ -25,6 +25,10 @@ public class ChatController {
     public ResponseEntity<Response> getChatById(@PathVariable Integer chatId) {
         return ResponseEntity.ok(chatService.findChatById(chatId));
     }
+    @GetMapping("/find-single")
+    public ResponseEntity<Response> getChatSingle(@RequestParam("idUser") Integer idUser ) {
+        return ResponseEntity.ok(chatService.findSingleChatByUserId(idUser));
+    }
     @GetMapping("/find-all/{userId}")
     public ResponseEntity<Response> getChatAll(@PathVariable Integer userId) {
         return ResponseEntity.ok(chatService.findAllChatByUserId(userId));

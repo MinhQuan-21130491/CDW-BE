@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class MessageRequest {
+@AllArgsConstructor
+
+public class MessageDtoPayload {
+    private Integer id;
     private String content;
     private String type;
-    private Integer receiverId;
-    private ArrayList<String> medias;
-
+    private LocalDateTime timestamp;
 }

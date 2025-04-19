@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class EntityDtoMapperImpl implements EntityDtoMapper {
     @Override
     public UserDto mapUserToDtoBasic(User user) {
+        System.out.println(user);
         UserDto userDTO = new UserDto();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
@@ -43,6 +44,14 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
         userChatDto.setUser(mapUserToDtoBasic(userChat.getUser()));
         return userChatDto;
     }
+    @Override
+    public MediaDto mapMediaToDtoBasic(Media media){
+        MediaDto mediaDto = new MediaDto();
+        mediaDto.setId(media.getId());
+        mediaDto.setUrl(media.getUrl());
+        mediaDto.setMessageDto(mapMessageToDtoBasic(media.getMessage()));
+        return mediaDto;
+    }
 
     @Override
     public MessageDto mapMessageToDtoBasic(Message message) {
@@ -50,6 +59,22 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
         messageDto.setId(message.getId());
         messageDto.setTimestamp(message.getTimestamp());
         messageDto.setContent(message.getContent());
+        messageDto.setType(message.getType());
+        return messageDto;
+    }
+
+    @Override
+    public MessageDto mapMessageToDtoPlusMedias(Message message) {
+        MessageDto messageDto = mapMessageToDtoBasic(message);
+
+        // Sao chép medias
+        List<Media> medias = new ArrayList<>(message.getMedias());
+        if (!medias.isEmpty()) {
+            messageDto.setMedias(medias.stream()
+                    .map(this::mapMediaToDtoBasic)
+                    .collect(Collectors.toList()));
+        }
+
         return messageDto;
     }
 
@@ -57,7 +82,7 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
     public UserMessageDto mapUserMessageToDtoBasic(UserMessage userMessage) {
         UserMessageDto userMessageDto = new UserMessageDto();
         userMessageDto.setId(userMessage.getId());
-        userMessageDto.setMessage(mapMessageToDtoBasic(userMessage.getMessage()));
+        userMessageDto.setMessage(mapMessageToDtoPlusMedias(userMessage.getMessage()));
         userMessageDto.setDeleted(userMessage.isDeleted());
         userMessageDto.setSenderUser(mapUserToDtoBasic(userMessage.getUser()));
         return userMessageDto;

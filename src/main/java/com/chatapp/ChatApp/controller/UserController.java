@@ -21,9 +21,10 @@ public class UserController {
     public ResponseEntity<User> getUserProfile()  {
         return  ResponseEntity.ok(userService.getLoginUser());
     }
+
     @GetMapping("/search")
     public ResponseEntity<Response> searchUser(@RequestParam("query") String query) {
-        return ResponseEntity.ok(userService.searchUser());
+        return ResponseEntity.ok(userService.searchUserByNameOrEmail(query));
     }
     @PutMapping("/update")
     public ResponseEntity<Response> updateUser(@RequestBody UpdateUserRequest userRequest) {

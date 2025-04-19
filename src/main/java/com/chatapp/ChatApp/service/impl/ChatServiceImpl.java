@@ -12,15 +12,15 @@ import com.chatapp.ChatApp.modal.UserMessage;
 import com.chatapp.ChatApp.repository.ChatRepository;
 import com.chatapp.ChatApp.request.GroupChatRequest;
 import com.chatapp.ChatApp.response.Response;
+import com.chatapp.ChatApp.s3.S3Service;
 import com.chatapp.ChatApp.service.iterf.ChatService;
 import com.chatapp.ChatApp.service.iterf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +29,8 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserService userService;
     private final EntityDtoMapper entityDtoMapper;
+    private final S3Service s3Service;
+
     @Override
     public Response createChat(User reqUser, Integer userId) {
         User receiUser = userService.findUserById(userId).getUser();
@@ -71,16 +73,74 @@ public class ChatServiceImpl implements ChatService {
     public Response findAllChatByUserId(Integer userId) {
         User user = userService.findUserById(userId).getUser();
         List<Chat> chats = chatRepository.findChatsByUserId(user.getId());
-        List<ChatDto> chatDtos = chats.stream().map(entityDtoMapper::mapChatToDtoPlusUserChatDtoAndUserMessageDto).collect(Collectors.toList());
+
+        List<ChatDto> chatDtos = chats.stream()
+                .map(entityDtoMapper::mapChatToDtoPlusUserChatDtoAndUserMessageDto)
+                .sorted((chat1, chat2) -> {
+                    // Dùng Optional để tránh lỗi null
+                    LocalDateTime lastMessage1 = Optional.ofNullable(chat1.getUserMessages())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(userMsg -> userMsg.getMessage().getTimestamp())
+                            .max(LocalDateTime::compareTo)
+                            .orElse(LocalDateTime.MIN);
+
+                    LocalDateTime lastMessage2 = Optional.ofNullable(chat2.getUserMessages())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(userMsg -> userMsg.getMessage().getTimestamp())
+                            .max(LocalDateTime::compareTo)
+                            .orElse(LocalDateTime.MIN);
+
+                    return lastMessage2.compareTo(lastMessage1); // sắp xếp theo thời gian giảm dần
+                })
+                .collect(Collectors.toList());
+
         return Response.builder().status(200).chats(chatDtos).build();
+    }
+
+
+    @Override
+    public Response findSingleChatByUserId(Integer userId) {
+        // Tìm người nhận và người yêu cầu
+        User userRecei = userService.findUserById(userId).getUser();
+        User userReq = userService.getLoginUser();
+
+        // Kiểm tra nếu người dùng không tìm thấy hoặc không hợp lệ
+        if (userRecei == null || userReq == null) {
+            return Response.builder().status(400).message("User not found").build();
+        }
+
+        // Tìm cuộc trò chuyện giữa 2 người dùng
+        Chat chat = chatRepository.findSingleChatByUserIds(userRecei, userReq);
+        // Nếu không có chat nào, trả về thông báo lỗi
+        if (chat == null) {
+            return Response.builder().status(404).message("No chat found").build();
+        }
+
+        // Chuyển đổi chat thành DTO
+        ChatDto chatDto = entityDtoMapper.mapChatToDtoPlusUserChatDtoAndUserMessageDto(chat);
+
+        // Trả về response
+        return Response.builder().status(200).chat(chatDto).build();
     }
     @Override
     public Response createGroupChat(User reqUser, GroupChatRequest groupChatRequest) {
         Chat groupChat = new Chat();
         groupChat.setCreatedBy(reqUser);
         groupChat.setGroup(true);
-        groupChat.setChat_name(groupChatRequest.getChatName());
-        groupChat.setChat_image(groupChatRequest.getChat_image());
+        groupChat.setChat_name(groupChatRequest.getChat_name());
+
+        if(groupChatRequest.getChat_image() != null) {
+            // Tạo tên file duy nhất
+            String fileName = "group_image/" + UUID.randomUUID() + ".jpg";
+
+            // Upload base64 -> S3 và lấy URL
+            String imageUrl = s3Service.uploadBase64Image(groupChatRequest.getChat_image(), fileName);
+
+            // Lưu URL
+            groupChat.setChat_image(imageUrl);
+        }
         UserChat usc = new UserChat();
         usc.setChat(groupChat);
         usc.setUser(reqUser);

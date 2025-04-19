@@ -8,6 +8,7 @@ public interface ChatService {
     public Response createChat(User reqUser, Integer userId);
     public Response findChatById(Integer id);
     public Response findAllChatByUserId(Integer userId);
+    public Response findSingleChatByUserId(Integer userId);
     public Response createGroupChat(User reqUser, GroupChatRequest groupChatRequest);
     public Response addUserToGroup(User idUser, Integer idUserToAdd, Integer idChat);
     public Response renameGroup(Integer idChat, User reqUser, String newName);
