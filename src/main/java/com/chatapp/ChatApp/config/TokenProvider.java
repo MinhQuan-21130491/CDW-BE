@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @Service
 public class TokenProvider {
-    private static final Long EXPIRATION_TIME_IN_MILISEC = 1000L * 60L * 14L *30L *6L; // 6 months
+    private static final Long EXPIRATION_TIME_IN_MILISEC = 1000L * 60L * 60L * 24L * 30L * 6L;
     SecretKey key;
     @PostConstruct
     private void init() {

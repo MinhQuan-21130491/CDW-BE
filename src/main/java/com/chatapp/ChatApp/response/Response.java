@@ -1,6 +1,7 @@
 package com.chatapp.ChatApp.response;
 
 import com.chatapp.ChatApp.dto.ChatDto;
+import com.chatapp.ChatApp.dto.UserDto;
 import com.chatapp.ChatApp.modal.Chat;
 import com.chatapp.ChatApp.modal.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,6 +24,7 @@ public class Response {
 
     private User user;
     private List<User> users;
+    private List<UserDto> usersDto;
 
     private Chat chatEntity;
     private ChatDto chat;

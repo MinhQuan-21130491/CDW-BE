@@ -3,6 +3,7 @@ package com.chatapp.ChatApp.modal;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,12 @@ public class Message {
 
     private String content;
 
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("message-media")
+    private List<Media> medias;
+
+    private String type = "text";
+
     private final LocalDateTime timestamp = LocalDateTime.now();
 
     @ManyToOne
@@ -32,6 +39,6 @@ public class Message {
     private User sender;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference // Đánh dấu phía cha (message) sẽ tuần tự hóa mối quan hệ này
+    @JsonManagedReference ("message-userMessages") // Đánh dấu phía cha (message) sẽ tuần tự hóa mối quan hệ này
     private List<UserMessage> userMessages = new ArrayList<>();
 }
