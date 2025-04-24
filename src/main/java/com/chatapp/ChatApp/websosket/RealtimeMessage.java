@@ -1,11 +1,13 @@
-package com.chatapp.ChatApp.controller;
+package com.chatapp.ChatApp.websosket;
 
-import com.chatapp.ChatApp.request.Payload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.security.Principal;
 
 @Controller
 public class RealtimeMessage {
@@ -19,9 +21,9 @@ public class RealtimeMessage {
 
     @MessageMapping("/message")
     @SendTo("/group/public")
-    public void messageRecei(@org.springframework.messaging.handler.annotation.Payload Payload payloadMessage) {
-//        System.out.println("payloadMessage" +payloadMessage);
+    public void messageRecei(@Payload com.chatapp.ChatApp.request.Payload payloadMessage) {
         simpMessagingTemplate.convertAndSend("/group/" + payloadMessage.getChatId(), payloadMessage);
+        simpMessagingTemplate.convertAndSend("/topic/notification/", "New message");
     }
 
 }
