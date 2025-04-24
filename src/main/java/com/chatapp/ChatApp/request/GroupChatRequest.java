@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupChatRequest {
     private List<Integer> usersId;
-    private String chatName;
+    private String chat_name;
     private String chat_image;
 }

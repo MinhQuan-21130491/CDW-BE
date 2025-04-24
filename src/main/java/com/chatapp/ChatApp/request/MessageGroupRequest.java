@@ -1,5 +1,6 @@
 package com.chatapp.ChatApp.request;
 
+import com.chatapp.ChatApp.modal.Media;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +10,10 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageRequest {
-    private String content;
+public class MessageGroupRequest {
+    private Integer chatId;
     private String type;
-    private Integer receiverId;
+    private String content;
     private ArrayList<String> medias;
 
 }
