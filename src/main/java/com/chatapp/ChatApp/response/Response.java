@@ -1,8 +1,10 @@
 package com.chatapp.ChatApp.response;
 
 import com.chatapp.ChatApp.dto.ChatDto;
+import com.chatapp.ChatApp.dto.StoryDto;
 import com.chatapp.ChatApp.dto.UserDto;
 import com.chatapp.ChatApp.modal.Chat;
+import com.chatapp.ChatApp.modal.Story;
 import com.chatapp.ChatApp.modal.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -30,5 +32,6 @@ public class Response {
     private ChatDto chat;
     private List<ChatDto> chats;
 
-
+    private Story story;
+    private StoryDto storyDto;
 }

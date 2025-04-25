@@ -31,4 +31,8 @@ public class UserController {
         User user = userService.getLoginUser();
         return ResponseEntity.ok(userService.updateUser(user.getId(), userRequest));
     }
+    @GetMapping("/users")
+    public ResponseEntity<Response> getUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 }
