@@ -17,6 +17,8 @@ public interface UserService {
 
     public Response searchUserByNameOrEmail(String nameOrEmail);
 
+    public Response getAllUsers();
+
     User getLoginUser();
 
 }

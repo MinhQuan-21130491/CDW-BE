@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class EntityDtoMapperImpl implements EntityDtoMapper {
     @Override
     public UserDto mapUserToDtoBasic(User user) {
-        System.out.println(user);
         UserDto userDTO = new UserDto();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
@@ -109,5 +108,28 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
         }
 
         return chatDto;
+    }
+
+    @Override
+    public StoryDto mapStoryToDtoBasic(Story story) {
+        StoryDto storyDto = new StoryDto();
+        storyDto.setId(story.getId());
+        storyDto.setUser(mapUserToDtoBasic(story.getUser()));
+        storyDto.setUrl(story.getUrl());
+        storyDto.setTimestamp(story.getTimestamp());
+        return storyDto;
+    }
+
+    @Override
+    public UserDto mapUserToDtoBasicPlusStoryDto(User user) {
+        UserDto userDto = mapUserToDtoBasic(user);
+
+        List<Story> stories = new ArrayList<>(user.getStories());
+        if (!stories.isEmpty()) {
+            userDto.setStories(stories.stream()
+                    .map(this::mapStoryToDtoBasic)
+                    .collect(Collectors.toList()));
+        }
+        return userDto;
     }
 }

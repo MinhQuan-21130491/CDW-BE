@@ -12,4 +12,7 @@ public interface EntityDtoMapper {
     public MessageDto mapMessageToDtoPlusMedias(Message message);
     public UserMessageDto mapUserMessageToDtoBasic(UserMessage userMessage);
     public ChatDto mapChatToDtoPlusUserChatDtoAndUserMessageDto(Chat chat);
+    public StoryDto mapStoryToDtoBasic(Story story);
+    public UserDto  mapUserToDtoBasicPlusStoryDto(User user);
+
 }
