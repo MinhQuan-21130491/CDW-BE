@@ -113,4 +113,14 @@ public class UserServiceImpl implements UserService {
         List<UserDto> usersDto = users.stream().map(entityDtoMapper::mapUserToDtoBasic).collect(Collectors.toList());
         return Response.builder().message("Search successful").status(200).usersDto(usersDto).build();
     }
+
+    @Override
+    public Response getAllUsers() {
+        List<User> users = userRepository.findAll();
+        if(users.isEmpty()) {
+            throw new NotFoundException("User not found");
+        }
+        List<UserDto> usersDto = users.stream().map(entityDtoMapper::mapUserToDtoBasicPlusStoryDto).collect(Collectors.toList());
+        return Response.builder().message("Get all user success").usersDto(usersDto).status(200).build();
+    }
 }
