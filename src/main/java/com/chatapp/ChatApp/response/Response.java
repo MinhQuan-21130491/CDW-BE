@@ -25,13 +25,15 @@ public class Response {
     private String expirationTime;
 
     private User user;
+    private UserDto userDto;
     private List<User> users;
     private List<UserDto> usersDto;
-
+    
     private Chat chatEntity;
     private ChatDto chat;
     private List<ChatDto> chats;
 
     private Story story;
     private StoryDto storyDto;
+    private List<StoryDto> stories;
 }
