@@ -18,8 +18,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<User> getUserProfile()  {
-        return  ResponseEntity.ok(userService.getLoginUser());
+    public ResponseEntity<Response> getUserProfile()  {
+        return  ResponseEntity.ok(userService.getInfor());
     }
 
     @GetMapping("/search")

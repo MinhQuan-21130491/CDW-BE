@@ -1,5 +1,6 @@
 package com.chatapp.ChatApp.modal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,10 +23,13 @@ public class Story {
 
     private String url;
 
+    private String type;
+
     private final LocalDateTime timestamp = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
+    @JsonBackReference
     private User user;
 
 }

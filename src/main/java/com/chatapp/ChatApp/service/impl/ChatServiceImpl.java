@@ -136,7 +136,7 @@ public class ChatServiceImpl implements ChatService {
             String fileName = "group_image/" + UUID.randomUUID() + ".jpg";
 
             // Upload base64 -> S3 và lấy URL
-            String imageUrl = s3Service.uploadBase64Image(groupChatRequest.getChat_image(), fileName);
+            String imageUrl = s3Service.uploadBase64Media(groupChatRequest.getChat_image(), fileName);
 
             // Lưu URL
             groupChat.setChat_image(imageUrl);

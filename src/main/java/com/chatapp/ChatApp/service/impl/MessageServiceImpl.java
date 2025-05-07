@@ -46,7 +46,7 @@ public class MessageServiceImpl implements MessageService {
                 String fileName = "pictures/" + UUID.randomUUID() + ".jpg";
 
                 // Upload base64 -> S3 và lấy URL
-                String imageUrl = s3Service.uploadBase64Image(url, fileName);
+                String imageUrl = s3Service.uploadBase64Media(url, fileName);
 
                 // Lưu URL
                 media.setUrl(imageUrl);
@@ -86,7 +86,7 @@ public class MessageServiceImpl implements MessageService {
                 String fileName = "pictures/" + UUID.randomUUID() + ".jpg";
 
                 // Upload base64 -> S3 và lấy URL
-                String imageUrl = s3Service.uploadBase64Image(url, fileName);
+                String imageUrl = s3Service.uploadBase64Media(url, fileName);
 
                 // Lưu URL
                 media.setUrl(imageUrl);

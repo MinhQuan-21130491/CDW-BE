@@ -114,9 +114,9 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
     public StoryDto mapStoryToDtoBasic(Story story) {
         StoryDto storyDto = new StoryDto();
         storyDto.setId(story.getId());
-        storyDto.setUser(mapUserToDtoBasic(story.getUser()));
         storyDto.setUrl(story.getUrl());
         storyDto.setTimestamp(story.getTimestamp());
+        storyDto.setType(story.getType());
         return storyDto;
     }
 
