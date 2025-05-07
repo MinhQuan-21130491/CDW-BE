@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
             String fileName = "profile_pictures/" + UUID.randomUUID() + ".jpg";
 
             // Upload base64 -> S3 và lấy URL
-            String imageUrl = s3Service.uploadBase64Image(req.getProfile_picture(), fileName);
+            String imageUrl = s3Service.uploadBase64Media(req.getProfile_picture(), fileName);
 
             // Lưu URL
             user.setProfile_picture(imageUrl);
@@ -104,6 +104,17 @@ public class UserServiceImpl implements UserService {
         String email = authentication.getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not found"));
+
+    }
+
+    @Override
+    public Response getInfor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user =  userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not found"));
+        UserDto userDto = entityDtoMapper.mapUserToDtoBasicPlusStoryDto(user);
+        return Response.builder().status(200).message("Get login user success").userDto(userDto).build();
     }
 
     @Override

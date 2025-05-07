@@ -14,4 +14,5 @@ public class StoryRequest {
     private Integer id;
     private String url;
     private Integer userId;
+    private String type;
 }

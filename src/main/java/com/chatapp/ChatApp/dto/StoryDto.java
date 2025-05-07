@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class StoryDto {
     private Integer id;
     private String url;
+    private String type;
     private LocalDateTime timestamp = LocalDateTime.now();
-    private UserDto user;
 }

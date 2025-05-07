@@ -19,6 +19,7 @@ public interface UserService {
 
     public Response getAllUsers();
 
-    User getLoginUser();
+    public User getLoginUser();
 
+    public Response getInfor();
 }
