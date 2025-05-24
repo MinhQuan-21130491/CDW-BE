@@ -1,5 +1,8 @@
 package com.chatapp.ChatApp.websosket;
 
+import com.chatapp.ChatApp.config.CustomUserDetailService;
+import com.chatapp.ChatApp.config.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -11,11 +14,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final TokenProvider tokenProvider;
+    private final CustomUserDetailService  userDetailService;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173").withSockJS();
+        registry.addEndpoint("/ws")
+//                .addInterceptors(new WebSocketAuthenticationInterceptor(tokenProvider, userDetailService))
+                .setAllowedOrigins("http://localhost:5173")
+                .withSockJS(); // Nếu dùng SockJS
     }
 
     @Override

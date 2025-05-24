@@ -1,10 +1,8 @@
 package com.chatapp.ChatApp.controller;
 
-import com.chatapp.ChatApp.request.StoryRequest;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.service.iterf.StoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

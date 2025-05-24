@@ -134,7 +134,7 @@ public class ChatServiceImpl implements ChatService {
         if(groupChatRequest.getChat_image() != null) {
             // Tạo tên file duy nhất
             String fileName = "group_image/" + UUID.randomUUID() + ".jpg";
-
+            System.out.println(groupChatRequest.getChat_image());
             // Upload base64 -> S3 và lấy URL
             String imageUrl = s3Service.uploadBase64Media(groupChatRequest.getChat_image(), fileName);
 
@@ -160,20 +160,27 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Response addUserToGroup(User user, Integer idUserToAdd, Integer idChat) {
+    public Response addUserToGroup(Integer idUserToAdd, Integer idChat) {
         Chat chat = chatRepository.findById(idChat).orElseThrow(() -> new NotFoundException("Not found chat with id " + idChat));
-        boolean isAdmin = isAdmin(chat.getUserChats(), user);
-        if(isAdmin){
-            User userToAdd = userService.findUserById(idUserToAdd).getUser();
-            UserChat usc = new UserChat();
-            usc.setChat(chat);
-            usc.setUser(userToAdd);
-            usc.setAdmin(false);
-            chat.getUserChats().add(usc);
-            chatRepository.save(chat);
-            return Response.builder().status(200).message("Add user to group success").build();
+        User userToAdd = userService.findUserById(idUserToAdd).getUser();
+
+        // Kiểm tra user đã có trong group chưa
+        boolean userExists = chat.getUserChats().stream()
+                .anyMatch(uc -> uc.getUser().getId().equals(userToAdd.getId()));
+
+        if (userExists) {
+            return Response.builder()
+                    .status(400)
+                    .message("User already in group")
+                    .build();
         }
-        throw new InvalidCredentialsException("You are not admin of this group");
+        UserChat usc = new UserChat();
+        usc.setChat(chat);
+        usc.setUser(userToAdd);
+        usc.setAdmin(false);
+        chat.getUserChats().add(usc);
+        chatRepository.save(chat);
+        return Response.builder().status(200).message("Add user to group success").build();
     }
 
     @Override
@@ -206,9 +213,10 @@ public class ChatServiceImpl implements ChatService {
             else if (isContainUser(chat.getUserChats(), reqUser)) {
                 if(user.getId().equals(reqUser.getId())) {
                     for (UserChat userChat : chat.getUserChats()) {
-                        userChat.getUser().equals(user);
-                        chat.getUserChats().remove(userChat);
-                        break;
+                        if (userChat.getUser().equals(user)) {
+                            chat.getUserChats().remove(userChat);
+                            break;
+                        }
                     }
                     chatRepository.save(chat);
                     return Response.builder().status(200).message("Out group successfully").build();

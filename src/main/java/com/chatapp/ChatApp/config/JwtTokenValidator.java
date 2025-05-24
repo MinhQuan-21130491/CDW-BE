@@ -33,11 +33,10 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
-        System.out.println(jwt);
+//        System.out.println(jwt);
         if(jwt != null) {
             try {
                 String username = tokenProvider.getEmailFromToken(jwt);
-                System.out.println(username);
                 UserDetails userDetails = userDetailService.loadUserByUsername(username);
                 if (StringUtils.hasText(username) && tokenProvider.isTokenValid(jwt, userDetails)) {
                     log.info("VALID JWT FOR {}", username);

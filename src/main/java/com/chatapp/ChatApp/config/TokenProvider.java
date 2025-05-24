@@ -43,6 +43,7 @@ public class TokenProvider {
         jwt = jwt.substring(7);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwt));
     }
+
     private boolean isTokenExpired(String jwt){
         return  extractClaims(jwt, Claims::getExpiration).before(new Date());
     }

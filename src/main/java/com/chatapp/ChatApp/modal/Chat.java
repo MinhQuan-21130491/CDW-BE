@@ -32,7 +32,7 @@ public class Chat {
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @OneToMany(mappedBy = "chat",  cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chat",  cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // Đánh dấu phía cha (Chat) sẽ tuần tự hóa mối quan hệ này
     private Set<UserChat> userChats = new HashSet<>();
 
