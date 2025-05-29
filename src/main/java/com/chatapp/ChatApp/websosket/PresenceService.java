@@ -1,7 +1,6 @@
-package com.chatapp.ChatApp.service.impl;
+package com.chatapp.ChatApp.websosket;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

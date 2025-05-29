@@ -2,7 +2,6 @@ package com.chatapp.ChatApp.websosket;
 
 import com.chatapp.ChatApp.request.PayloadBroadcast;
 import com.chatapp.ChatApp.request.PayloadRenameGroup;
-import com.chatapp.ChatApp.service.impl.PresenceService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,7 +20,7 @@ public class RealtimeMessage {
     @MessageMapping("/message")
     public void handleIncomingMessage(@Payload com.chatapp.ChatApp.request.Payload payloadMessage) {
         simpMessagingTemplate.convertAndSend("/group/" + payloadMessage.getChatId(), payloadMessage);
-        for(Integer id: payloadMessage.getReceiverIds()) {
+            for(Integer id: payloadMessage.getReceiverIds()) {
             simpMessagingTemplate.convertAndSend("/topic/message/" + id, "New message");
         }
     }
@@ -33,8 +32,9 @@ public class RealtimeMessage {
 
     @MessageMapping("/broadcast-notification")
     public void handleBroadcastNotification(@Payload PayloadBroadcast payloadBroadcast) {
-        System.out.println(payloadBroadcast.getId());
-        simpMessagingTemplate.convertAndSend("/topic/notification/" + payloadBroadcast.getId(), payloadBroadcast);
+        for(Integer id: payloadBroadcast.getReceiverIds()) {
+            simpMessagingTemplate.convertAndSend("/topic/notification/" + id, payloadBroadcast);
+        }
     }
 
     @MessageMapping("/init-online-users")

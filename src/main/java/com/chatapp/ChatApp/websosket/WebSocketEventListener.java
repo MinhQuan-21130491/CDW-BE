@@ -1,6 +1,5 @@
 package com.chatapp.ChatApp.websosket;
 
-import com.chatapp.ChatApp.service.impl.PresenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -8,8 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-
-import java.util.List;
 
 // WebSocketEventListener.java
 @Component

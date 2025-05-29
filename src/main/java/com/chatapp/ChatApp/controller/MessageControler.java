@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MessageControler {
     private final MessageService messageService;
-    private final UserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<Response> sendMessage(@RequestBody MessageRequest messageRequest) {
