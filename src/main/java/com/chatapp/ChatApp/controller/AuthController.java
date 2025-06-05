@@ -4,6 +4,7 @@ import com.chatapp.ChatApp.request.LoginRequest;
 import com.chatapp.ChatApp.request.RegistrationRequest;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.service.iterf.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Response> registerUser(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<Response> registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         System.out.println(registrationRequest);
         return ResponseEntity.ok(userService.registerUser(registrationRequest));
     }

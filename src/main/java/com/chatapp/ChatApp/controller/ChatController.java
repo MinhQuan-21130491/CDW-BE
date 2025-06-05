@@ -40,8 +40,7 @@ public class ChatController {
     }
     @PutMapping("/{chatId}/add/{userId}")
     public ResponseEntity<Response> addUserToGroup(@PathVariable Integer chatId, @PathVariable Integer userId) {
-        User user = userService.getLoginUser();
-        return ResponseEntity.ok(chatService.addUserToGroup(user, userId, chatId));
+        return ResponseEntity.ok(chatService.addUserToGroup(userId, chatId));
     }
     @PutMapping("/{chatId}/rename/{newName}")
     public ResponseEntity<Response> renameGroup(@PathVariable Integer chatId, @PathVariable String newName) {

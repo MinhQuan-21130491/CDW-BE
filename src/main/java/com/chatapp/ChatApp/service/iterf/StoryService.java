@@ -1,7 +1,5 @@
 package com.chatapp.ChatApp.service.iterf;
 
-import com.chatapp.ChatApp.modal.Story;
-import com.chatapp.ChatApp.request.StoryRequest;
 import com.chatapp.ChatApp.response.Response;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -8,7 +8,6 @@ import com.chatapp.ChatApp.modal.Story;
 import com.chatapp.ChatApp.modal.User;
 import com.chatapp.ChatApp.repository.StoryRepository;
 import com.chatapp.ChatApp.repository.UserRepository;
-import com.chatapp.ChatApp.request.StoryRequest;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.s3.S3Service;
 import com.chatapp.ChatApp.s3.S3ServicePartFile;
