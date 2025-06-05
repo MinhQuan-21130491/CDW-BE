@@ -15,7 +15,7 @@ public interface UserService {
 
     public Response updateUser(Integer id, UpdateUserRequest req);
 
-    public Response searchUserByNameOrEmail(String nameOrEmail);
+    public Response searchUserByName(String name);
 
     public Response getAllUsers();
 

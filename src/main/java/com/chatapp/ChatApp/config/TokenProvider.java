@@ -5,13 +5,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -43,6 +40,7 @@ public class TokenProvider {
         jwt = jwt.substring(7);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwt));
     }
+
     private boolean isTokenExpired(String jwt){
         return  extractClaims(jwt, Claims::getExpiration).before(new Date());
     }

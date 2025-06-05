@@ -118,9 +118,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response searchUserByNameOrEmail(String nameOrEmail) {
-        System.out.println("nameOrEmail" + nameOrEmail);
-        List<User> users = userRepository.searchUserByNameOrEmail(nameOrEmail);
+    public Response searchUserByName(String name) {
+        List<User> users = userRepository.searchUserByName(name);
         List<UserDto> usersDto = users.stream().map(entityDtoMapper::mapUserToDtoBasic).collect(Collectors.toList());
         return Response.builder().message("Search successful").status(200).usersDto(usersDto).build();
     }

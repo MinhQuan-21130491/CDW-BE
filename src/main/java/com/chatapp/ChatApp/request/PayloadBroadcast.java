@@ -8,12 +8,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Payload {
-    private boolean deleted;
-    private int chatId;
-    private MessageDtoPayload message;
-    private UserDtoPayload senderUser;
+public class PayloadBroadcast {
     private List<Integer> receiverIds;
-    private boolean showAvatar;
+    private String message;
 
 }
