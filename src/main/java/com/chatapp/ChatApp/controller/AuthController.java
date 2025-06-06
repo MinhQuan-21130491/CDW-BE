@@ -2,6 +2,7 @@ package com.chatapp.ChatApp.controller;
 
 import com.chatapp.ChatApp.request.LoginRequest;
 import com.chatapp.ChatApp.request.RegistrationRequest;
+import com.chatapp.ChatApp.request.RequestForgetPassword;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.service.iterf.UserService;
 import jakarta.validation.Valid;
@@ -26,6 +27,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Response> loginUser(@RequestBody LoginRequest loginRequest){
         return ResponseEntity.ok(userService.LoginUser(loginRequest));
+    }
+    @PostMapping("/forget-password")
+    public ResponseEntity<Response> changePassword(@Valid @RequestBody RequestForgetPassword request) {
+        return ResponseEntity.ok(userService.forgetPassword(request.getEmail()));
     }
 
 }

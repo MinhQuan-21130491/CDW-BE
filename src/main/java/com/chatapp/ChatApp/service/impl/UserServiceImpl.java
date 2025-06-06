@@ -16,6 +16,9 @@ import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.s3.S3Service;
 import com.chatapp.ChatApp.service.iterf.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private JavaMailSender mailSender;
     private final EntityDtoMapper entityDtoMapper;
     private final S3Service s3Service;
     @Override
@@ -118,6 +124,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Response changePassword(String oldPassword, String newPassword) {
+        User user = getLoginUser();
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new InvalidCredentialsException("Wrong password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return Response.builder().message("Change password successful").status(200).build();
+    }
+
+    @Override
+    public Response forgetPassword(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new InvalidCredentialsException("Email not existed");
+        }
+        User user = userOpt.get();
+        user.setPassword(generateRandomPassword());
+        userRepository.save(user);
+        sendEmail(user.getEmail(), user.getPassword());
+        return Response.builder().message("Send new password to your email successfully").status(200).build();
+    }
+
+    @Override
     public Response searchUserByName(String name) {
         List<User> users = userRepository.searchUserByName(name);
         List<UserDto> usersDto = users.stream().map(entityDtoMapper::mapUserToDtoBasic).collect(Collectors.toList());
@@ -132,5 +161,24 @@ public class UserServiceImpl implements UserService {
         }
         List<UserDto> usersDto = users.stream().map(entityDtoMapper::mapUserToDtoBasicPlusStoryDto).collect(Collectors.toList());
         return Response.builder().message("Get all user success").usersDto(usersDto).status(200).build();
+    }
+
+    private void sendEmail(String email, String newPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Đặt lại mật khẩu");
+        message.setText("Mật khẩu mới web chat trực tuyến của bạn là : " + newPassword + "\n Vui lòng không để lộ ra ngoài tránh ảnh hưởng đến tài khoản.");
+        mailSender.send(message);
+    }
+    public static String generateRandomPassword() {
+        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        int PASSWORD_LENGTH = 8;
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(PASSWORD_LENGTH);
+        for (int i = 0; i < PASSWORD_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(index));
+        }
+        return sb.toString();
     }
 }

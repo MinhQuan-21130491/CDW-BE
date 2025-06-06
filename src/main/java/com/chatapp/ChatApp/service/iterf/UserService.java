@@ -22,4 +22,8 @@ public interface UserService {
     public User getLoginUser();
 
     public Response getInfor();
+
+    public Response changePassword(String oldPassword, String newPassword);
+
+    public Response forgetPassword(String email);
 }
