@@ -17,4 +17,6 @@ public class UserChatDto {
     private boolean isAdmin;
     private UserDto user;
     private LocalDateTime joinedAt = LocalDateTime.now();
+    private LocalDateTime deleteLastAt;
+
 }

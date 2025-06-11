@@ -37,9 +37,18 @@ public class ChatServiceImpl implements ChatService {
         Chat chatResult = new Chat();
         String message = "Create chat room successfully";
         Chat isChatExist = chatRepository.findSingleChatByUserIds(receiUser, reqUser);
-        if(isChatExist != null){
+        Chat isChatExistRecei = chatRepository.findSingleChatByUserIds(reqUser, receiUser);
+
+        if(isChatExist != null) {
             chatResult = isChatExist;
-            message = "Chat room already exists";
+            message = "Chat existed";
+        }else if(isChatExistRecei != null) {
+            isChatExistRecei.getUserChats().forEach(userChat -> {
+                userChat.setDeleted(false);
+
+            });
+            chatResult = isChatExistRecei;
+            message = "ReCreate chat existed";
         }else {
             //model userchat
             UserChat usc1 = new UserChat();
@@ -116,6 +125,16 @@ public class ChatServiceImpl implements ChatService {
         // Nếu không có chat nào, trả về thông báo lỗi
         if (chat == null) {
             return Response.builder().status(404).message("No chat found").build();
+        }
+        UserChat userChat = chat.getUserChats().stream()
+                .filter(userChat1 -> userChat1.getUser().getId().equals(userReq.getId()))
+                .findFirst()
+                .orElse(null);
+        if (userChat != null && userChat.getDeleteLastAt() != null) {
+            List<UserMessage> userMessages = chat.getUserMessages().stream()
+                    .filter(userMessage -> userMessage.getMessage().getTimestamp().isAfter(userChat.getDeleteLastAt()))
+                    .collect(Collectors.toList());
+            chat.setUserMessages(userMessages);
         }
 
         // Chuyển đổi chat thành DTO
@@ -230,10 +249,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Response removeChat(Integer idChat, User reqUser) {
-        Chat chat = chatRepository.findById(idChat).get();
+        Chat chat = chatRepository.findById(idChat).orElseThrow(() -> new NotFoundException("Chat with ID " + idChat + " not found"));
         for(UserChat userChat: chat.getUserChats()) {
             if(userChat.getUser().equals(reqUser)) {
                 userChat.setDeleted(true);
+                userChat.setDeleteLastAt(LocalDateTime.now());
                 break;
             }
         }
@@ -263,4 +283,5 @@ public class ChatServiceImpl implements ChatService {
         }
         return false;
     }
+
 }

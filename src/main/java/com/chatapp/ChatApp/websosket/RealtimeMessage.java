@@ -19,7 +19,7 @@ public class RealtimeMessage {
 
     @MessageMapping("/message")
     public void handleIncomingMessage(@Payload com.chatapp.ChatApp.request.Payload payloadMessage) {
-        simpMessagingTemplate.convertAndSend("/group/" + payloadMessage.getChatId(), payloadMessage);
+            simpMessagingTemplate.convertAndSend("/group/" + payloadMessage.getChatId(), payloadMessage);
             for(Integer id: payloadMessage.getReceiverIds()) {
             simpMessagingTemplate.convertAndSend("/topic/message/" + id, "New message");
         }

@@ -2,10 +2,12 @@ package com.chatapp.ChatApp.dto;
 
 import com.chatapp.ChatApp.modal.UserMessage;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 

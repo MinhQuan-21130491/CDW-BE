@@ -37,6 +37,9 @@
         @Column(name = "joined_at")
         private final LocalDateTime joinedAt = LocalDateTime.now();
 
+        @Column(name = "deletelast_at")
+        private  LocalDateTime deleteLastAt;
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
