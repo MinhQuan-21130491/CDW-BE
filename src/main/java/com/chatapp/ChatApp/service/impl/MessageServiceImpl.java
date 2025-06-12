@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +31,12 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Response sendMessageGroup(MessageGroupRequest messageRequest) {
         User reqUser = userService.getLoginUser();
-        Chat chat = new Chat();
         // xu ly cho nhan tin trong nhom (khong can receiverId)
-        chat = chatRepository.findById(messageRequest.getChatId()).orElseThrow(() -> new NotFoundException("Chat not found"));
-
+        Chat chat = chatRepository.findById(messageRequest.getChatId()).orElseThrow(() -> new NotFoundException("Chat not found"));
+        //set lai false
+        chat.getUserChats().forEach(userChat -> {
+            userChat.setDeleted(false);
+        });
         Message message = new Message();
         message.setContent(messageRequest.getContent());
         message.setType(messageRequest.getType());
@@ -68,16 +72,17 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Response sendMessage(MessageRequest messageRequest) {
         User reqUser = userService.getLoginUser();
-        Chat chat = new Chat();
         // xu ly cho nhan tin rieng
-        chat = chatService.createChat(reqUser, messageRequest.getReceiverId()).getChatEntity();
-
+        Chat chat = chatService.createChat(reqUser, messageRequest.getReceiverId()).getChatEntity();
         Message message = new Message();
         message.setContent(messageRequest.getContent());
         message.setType(messageRequest.getType());
         message.setSender(reqUser);
         UserMessage userMessage = new UserMessage();
-
+        //set lai false
+        chat.getUserChats().forEach(userChat -> {
+            userChat.setDeleted(false);
+        });
         ArrayList<Media> medias = new ArrayList<>();
         for(String url: messageRequest.getMedias()){
             Media media = new Media();

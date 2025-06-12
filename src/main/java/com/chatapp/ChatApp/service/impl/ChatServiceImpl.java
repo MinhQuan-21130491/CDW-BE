@@ -45,7 +45,6 @@ public class ChatServiceImpl implements ChatService {
         }else if(isChatExistRecei != null) {
             isChatExistRecei.getUserChats().forEach(userChat -> {
                 userChat.setDeleted(false);
-
             });
             chatResult = isChatExistRecei;
             message = "ReCreate chat existed";
@@ -73,8 +72,19 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Response findChatById(Integer idChat) {
+        User userReq = userService.getLoginUser();
         Chat chat = chatRepository.findById(idChat)
                 .orElseThrow(() -> new NotFoundException("Chat with ID " + idChat + " not found"));
+        UserChat userChat = chat.getUserChats().stream()
+                .filter(userChat1 -> userChat1.getUser().getId().equals(userReq.getId()))
+                .findFirst()
+                .orElse(null);
+        if (userChat != null && userChat.getDeleteLastAt() != null) {
+            List<UserMessage> userMessages = chat.getUserMessages().stream()
+                    .filter(userMessage -> userMessage.getMessage().getTimestamp().isAfter(userChat.getDeleteLastAt()))
+                    .collect(Collectors.toList());
+            chat.setUserMessages(userMessages);
+        }
         ChatDto chatDto = entityDtoMapper.mapChatToDtoPlusUserChatDtoAndUserMessageDto(chat);
         return Response.builder().status(200).chat(chatDto).build();
     }
@@ -136,7 +146,6 @@ public class ChatServiceImpl implements ChatService {
                     .collect(Collectors.toList());
             chat.setUserMessages(userMessages);
         }
-
         // Chuyển đổi chat thành DTO
         ChatDto chatDto = entityDtoMapper.mapChatToDtoPlusUserChatDtoAndUserMessageDto(chat);
 
