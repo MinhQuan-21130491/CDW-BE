@@ -4,22 +4,20 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationRequest {
-    @Valid
-    @NotBlank(message = "Email not Blank")
-    @Email(message = "Invalid email")
-    private String email;
-    private String full_name;
+@NoArgsConstructor
+public class RequestChangePassword {
+
+    private String oldPassword;
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$",
             message = "Password must be at least 6 characters, contain uppercase, lowercase, numbers and special characters"
     )
-    private String password;
+    private String newPassword;
 }

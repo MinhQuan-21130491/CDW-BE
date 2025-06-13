@@ -12,6 +12,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -36,4 +37,6 @@ public class Response {
     private Story story;
     private StoryDto storyDto;
     private List<StoryDto> stories;
+
+    private Map<String, String> errors;
 }

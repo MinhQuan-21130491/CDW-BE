@@ -1,9 +1,12 @@
 package com.chatapp.ChatApp.controller;
 
 import com.chatapp.ChatApp.modal.User;
+import com.chatapp.ChatApp.request.RequestChangePassword;
+import com.chatapp.ChatApp.request.RequestForgetPassword;
 import com.chatapp.ChatApp.request.UpdateUserRequest;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.service.iterf.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,4 +38,11 @@ public class UserController {
     public ResponseEntity<Response> getUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Response> changePassword(@Valid @RequestBody RequestChangePassword request) {
+        return ResponseEntity.ok(userService.changePassword(request.getOldPassword(), request.getNewPassword()));
+    }
+
+
 }

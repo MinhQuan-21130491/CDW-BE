@@ -41,6 +41,7 @@ public class EntityDtoMapperImpl implements EntityDtoMapper {
         userChatDto.setAdmin(userChat.isAdmin());
         userChatDto.setDeleted(userChat.isDeleted());
         userChatDto.setUser(mapUserToDtoBasic(userChat.getUser()));
+        userChatDto.setDeleteLastAt(userChat.getDeleteLastAt());
         return userChatDto;
     }
     @Override
