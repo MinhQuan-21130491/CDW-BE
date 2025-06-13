@@ -17,7 +17,7 @@ public class RequestChangePassword {
     private String oldPassword;
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$",
-            message = "Mật khẩu phải có ít nhất 6 ký tự, chứa chữ hoa, chữ thường, số và ký tự đặc biệt"
+            message = "Password must be at least 6 characters, contain uppercase, lowercase, numbers and special characters"
     )
     private String newPassword;
 }

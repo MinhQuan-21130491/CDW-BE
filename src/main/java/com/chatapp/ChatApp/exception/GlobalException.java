@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @RestControllerAdvice
 public class GlobalException {
 
@@ -42,19 +46,18 @@ public class GlobalException {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
-        BindingResult bindingResult = ex.getBindingResult();
-        StringBuilder errorMessages = new StringBuilder();
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errorMessages = new HashMap<>();
 
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            errorMessages.append(fieldError.getDefaultMessage());
-        }
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errorMessages.put(error.getField(), error.getDefaultMessage())
+        );
 
-        Response errorResponse = Response.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(errorMessages.toString())
-                .build();
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("errors", errorMessages);
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
 }
