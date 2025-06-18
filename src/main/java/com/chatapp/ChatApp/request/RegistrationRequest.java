@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegistrationRequest {
     @Valid
-    @NotBlank(message = "Email not Blank")
-    @Email(message = "Invalid email")
+    @NotBlank(message = "error_email_blank")
+    @Email(message = "error_invalid_email")
     private String email;
+    @Size(min = 4,max=10, message = "error_length_name")
     private String full_name;
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$",
-            message = "Password must be at least 6 characters, contain uppercase, lowercase, numbers and special characters"
+            message = "error_password_partern"
     )
     private String password;
 }

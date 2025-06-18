@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUserByName(query));
     }
     @PutMapping("/update")
-    public ResponseEntity<Response> updateUser(@RequestBody UpdateUserRequest userRequest) {
+    public ResponseEntity<Response> updateUser(@Valid @RequestBody UpdateUserRequest userRequest) {
         User user = userService.getLoginUser();
         return ResponseEntity.ok(userService.updateUser(user.getId(), userRequest));
     }
@@ -41,7 +41,7 @@ public class UserController {
 
     @PostMapping("/change-password")
     public ResponseEntity<Response> changePassword(@Valid @RequestBody RequestChangePassword request) {
-        return ResponseEntity.ok(userService.changePassword(request.getOldPassword(), request.getNewPassword()));
+        return ResponseEntity.ok(userService.changePassword(request.getOldPassword(), request.getPassword()));
     }
 
 

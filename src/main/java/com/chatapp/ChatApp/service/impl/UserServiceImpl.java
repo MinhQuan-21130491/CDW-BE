@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     public Response registerUser(RegistrationRequest registrationRequest) {
         Optional<User> optionUser = userRepository.findByEmail(registrationRequest.getEmail());
         if (optionUser.isPresent()) {
-            throw new InvalidCredentialsException("Email existed");
+            throw new InvalidCredentialsException("error_email_existed");
         }
         User user = User.builder()
                 .email(registrationRequest.getEmail())
@@ -55,18 +55,18 @@ public class UserServiceImpl implements UserService {
                 .full_name(registrationRequest.getFull_name())
                 .build();
         userRepository.save(user);
-        return Response.builder().message("Register successful").status(200).build();
+        return Response.builder().message("success_register").status(200).build();
     }
 
     @Override
     public Response LoginUser(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new InvalidCredentialsException("Email not found"));
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new InvalidCredentialsException("error_email_not_found"));
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Wrong password");
+            throw new InvalidCredentialsException("error_wrong_password");
         }
         String token = tokenProvider.generateToken(user);
 
-        return Response.builder().message("Login successful").status(200).token(token).build();
+        return Response.builder().message("success_login").status(200).token(token).build();
     }
 
     @Override
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
             user.setFull_name(req.getFull_name());
         }
 
-        if (req.getProfile_picture() != null) {
+        if (req.getProfile_picture() != null && !req.getProfile_picture().equals(user.getProfile_picture())) {
             // Tạo tên file duy nhất
             String fileName = "profile_pictures/" + UUID.randomUUID() + ".jpg";
 
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
             user.setProfile_picture(imageUrl);
         }
         userRepository.save(user);
-        return Response.builder().message("Update successful").status(200).build();
+        return Response.builder().message("success.change_profile").status(200).build();
     }
 
     @Override
@@ -127,23 +127,25 @@ public class UserServiceImpl implements UserService {
     public Response changePassword(String oldPassword, String newPassword) {
         User user = getLoginUser();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new InvalidCredentialsException("Wrong password");
+            throw new InvalidCredentialsException("error_wrong_password");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
-        return Response.builder().message("Change password successful").status(200).build();
+        userRepository.save(user);
+        return Response.builder().message("success_change_password").status(200).build();
     }
 
     @Override
     public Response forgetPassword(String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
-            throw new InvalidCredentialsException("Email not existed");
+            throw new InvalidCredentialsException("error_email_not_existed");
         }
         User user = userOpt.get();
-        user.setPassword(generateRandomPassword());
+        String passwordNew = generateRandomPassword();
+        user.setPassword(passwordEncoder.encode(passwordNew));
         userRepository.save(user);
-        sendEmail(user.getEmail(), user.getPassword());
-        return Response.builder().message("Send new password to your email successfully").status(200).build();
+        sendEmail(user.getEmail(), passwordNew);
+        return Response.builder().message("successs_send").status(200).build();
     }
 
     @Override
@@ -167,7 +169,7 @@ public class UserServiceImpl implements UserService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Đặt lại mật khẩu");
-        message.setText("Mật khẩu mới web chat trực tuyến của bạn là : " + newPassword + "\n Vui lòng không để lộ ra ngoài tránh ảnh hưởng đến tài khoản.");
+        message.setText("Mật khẩu mới web chat trực tuyến của bạn là : " + newPassword + "\nVui lòng không để lộ ra ngoài tránh ảnh hưởng đến tài khoản.");
         mailSender.send(message);
     }
     public static String generateRandomPassword() {

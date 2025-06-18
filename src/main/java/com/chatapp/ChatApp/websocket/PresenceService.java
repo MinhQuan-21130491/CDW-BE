@@ -1,4 +1,4 @@
-package com.chatapp.ChatApp.websosket;
+package com.chatapp.ChatApp.websocket;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

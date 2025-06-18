@@ -9,6 +9,7 @@ import com.chatapp.ChatApp.service.iterf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,10 +43,12 @@ public class ChatController {
     public ResponseEntity<Response> addUserToGroup(@PathVariable Integer chatId, @PathVariable Integer userId) {
         return ResponseEntity.ok(chatService.addUserToGroup(userId, chatId));
     }
-    @PutMapping("/{chatId}/rename/{newName}")
-    public ResponseEntity<Response> renameGroup(@PathVariable Integer chatId, @PathVariable String newName) {
+    @PostMapping("/edit-group")
+    public ResponseEntity<Response> editGroup(@RequestParam("chatId") Integer chatId,
+                                              @RequestParam("newName") String newName,
+                                              @RequestPart(value = "groupAvatar", required = false) MultipartFile groupAvatar) {
         User user = userService.getLoginUser();
-        return ResponseEntity.ok(chatService.renameGroup(chatId, user, newName));
+        return ResponseEntity.ok(chatService.editGroup(chatId, user, newName, groupAvatar));
     }
     @PutMapping("/{chatId}/remove/{userId}")
     public ResponseEntity<Response> removeUserFromGroup(@PathVariable Integer chatId, @PathVariable Integer userId) {

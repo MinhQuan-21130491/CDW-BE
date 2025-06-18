@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestForgetPassword {
-    @Email(message = "invalid email")
+    @Email(message = "error_invalid_email")
     private String email;
 }

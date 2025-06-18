@@ -1,4 +1,4 @@
-package com.chatapp.ChatApp.websosket;
+package com.chatapp.ChatApp.websocket;
 
 import com.chatapp.ChatApp.request.PayloadBroadcast;
 import com.chatapp.ChatApp.request.PayloadRenameGroup;

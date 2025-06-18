@@ -17,7 +17,7 @@ public class RequestChangePassword {
     private String oldPassword;
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{6,}$",
-            message = "Password must be at least 6 characters, contain uppercase, lowercase, numbers and special characters"
+            message = "error_password_partern"
     )
-    private String newPassword;
+    private String password;
 }

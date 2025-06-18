@@ -11,5 +11,6 @@ import java.util.List;
 public class PayloadBroadcast {
     private List<Integer> receiverIds;
     private String message;
-
+    private Integer chatId;
+    private Integer requestId;
 }

@@ -13,10 +13,12 @@ import com.chatapp.ChatApp.repository.ChatRepository;
 import com.chatapp.ChatApp.request.GroupChatRequest;
 import com.chatapp.ChatApp.response.Response;
 import com.chatapp.ChatApp.s3.S3Service;
+import com.chatapp.ChatApp.s3.S3ServicePartFile;
 import com.chatapp.ChatApp.service.iterf.ChatService;
 import com.chatapp.ChatApp.service.iterf.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class ChatServiceImpl implements ChatService {
     private final UserService userService;
     private final EntityDtoMapper entityDtoMapper;
     private final S3Service s3Service;
+    private final S3ServicePartFile s3ServicePartFile;
 
     @Override
     public Response createChat(User reqUser, Integer userId) {
@@ -184,7 +187,7 @@ public class ChatServiceImpl implements ChatService {
         }
         chatRepository.save(groupChat);
         ChatDto groupChatDto = entityDtoMapper.mapChatToDtoPlusUserChatDtoAndUserMessageDto(groupChat);
-        return Response.builder().status(200).message("Create group chat successfully").chat(groupChatDto).build();
+        return Response.builder().status(200).message("success_create_group").chat(groupChatDto).build();
     }
 
     @Override
@@ -199,7 +202,7 @@ public class ChatServiceImpl implements ChatService {
         if (userExists) {
             return Response.builder()
                     .status(400)
-                    .message("User already in group")
+                    .message("user_existed_in_group")
                     .build();
         }
         UserChat usc = new UserChat();
@@ -208,16 +211,22 @@ public class ChatServiceImpl implements ChatService {
         usc.setAdmin(false);
         chat.getUserChats().add(usc);
         chatRepository.save(chat);
-        return Response.builder().status(200).message("Add user to group success").build();
+        return Response.builder().status(200).message("success_add_user").build();
     }
 
     @Override
-    public Response renameGroup(Integer idChat, User user, String newName) {
+    public Response editGroup(Integer idChat, User user, String newName, MultipartFile file) {
         Chat chat = chatRepository.findById(idChat).orElseThrow(() -> new NotFoundException("Not found chat with id " + idChat));
         if(isContainUser(chat.getUserChats(), user)) {
             chat.setChat_name(newName);
+            if (file != null && !file.isEmpty()) {
+                String fileName = "chat_image/" + UUID.randomUUID() + ".jpg";
+                String url = s3ServicePartFile.uploadFile(file, fileName);
+                chat.setChat_image(url);
+            }
             chatRepository.save(chat);
-            return Response.builder().status(200).message("Rename group successfully").build();
+            ChatDto chatDto = entityDtoMapper.mapChatToDtoPlusUserChatDtoAndUserMessageDto(chat);
+            return Response.builder().status(200).message("success_edit_group").chat(chatDto).build();
         }
         throw new InvalidCredentialsException("You are not member of this group");
     }
@@ -236,7 +245,7 @@ public class ChatServiceImpl implements ChatService {
                     }
                 }
                 chatRepository.save(chat);
-                return Response.builder().status(200).message("Remove user in group successfully").build();
+                return Response.builder().status(200).message("success_remove_user").build();
             }
             else if (isContainUser(chat.getUserChats(), reqUser)) {
                 if(user.getId().equals(reqUser.getId())) {
@@ -247,7 +256,7 @@ public class ChatServiceImpl implements ChatService {
                         }
                     }
                     chatRepository.save(chat);
-                    return Response.builder().status(200).message("Out group successfully").build();
+                    return Response.builder().status(200).message("success_out_group").build();
                 }
             }else {
                 throw new InvalidCredentialsException("You can't remove user from this group");
@@ -272,7 +281,7 @@ public class ChatServiceImpl implements ChatService {
             }
         }
         chatRepository.save(chat);
-        return Response.builder().status(200).message("Remove chat successfully").build();
+        return Response.builder().status(200).message("success_remove_chat").build();
     }
     private boolean isAdmin(Set<UserChat> userChats, User user) {
         for(UserChat userChat: userChats) {

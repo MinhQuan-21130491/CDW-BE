@@ -15,5 +15,5 @@ public class Payload {
     private UserDtoPayload senderUser;
     private List<Integer> receiverIds;
     private boolean showAvatar;
-
+    private boolean isSeen;
 }

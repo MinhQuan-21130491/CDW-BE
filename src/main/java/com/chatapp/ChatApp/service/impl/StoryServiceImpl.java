@@ -27,7 +27,6 @@ public class StoryServiceImpl implements StoryService {
     private final UserRepository userRepository;
     private final StoryRepository storyRepository;
     private final UserService userService;
-    private final S3Service s3Service;
     private final S3ServicePartFile s3ServicePartFile;
     private final EntityDtoMapper entityDtoMapper;
 
@@ -56,7 +55,7 @@ public class StoryServiceImpl implements StoryService {
 
         storyRepository.save(story);
         user.getStories().add(story);
-        return Response.builder().status(200).message("Add story success").build();
+        return Response.builder().status(200).message("success_add_story").build();
     }
 
     @Override
@@ -73,7 +72,7 @@ public class StoryServiceImpl implements StoryService {
         storyRepository.delete(story);
         return Response.builder()
                 .status(200)
-                .message("Delete story success")
+                .message("success_delete_story")
                 .build();
     }
 
